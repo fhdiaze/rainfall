@@ -13,7 +13,4 @@ for i in range(n):
 vineyard = Vineyard(l, r, tarps)
 vineyard.plot()
 
-for t in vineyard.tarps:
-    print(t.slope())
-
 print(vineyard)

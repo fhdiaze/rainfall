@@ -15,6 +15,9 @@ class Vineyard(object):
         tarps = ", ".join([str(t) for t in self.tarps])
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)
 
+    def punctures(self):
+        pass
+
     def plot(self):
         plt.interactive(False)
         plt.show(block=True)
