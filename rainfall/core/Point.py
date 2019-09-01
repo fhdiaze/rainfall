@@ -2,7 +2,6 @@ import math
 
 
 class Point:
-    EPSILON = 0.0000001
     __slots__ = ["x", "y"]
 
     def __init__(self, x: float, y: float):
