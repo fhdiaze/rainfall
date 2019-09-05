@@ -24,13 +24,27 @@ class Tarp(object):
 
     def intersect(self, other):
         resp = False
+        cmp = other.lower - self.lower
         r = self.clockwise()
         s = other.clockwise()
-        rxs = r.det(s)
-        sxr = s.det(r)
 
-        if self.overlap(other) < Point.EPSILON < abs(rxs):
-            t = (other.tail - self.tail).det(s) / rxs
-            u = (self.tail - other.tail).det(r) / sxr
+        cmp_x_r = cmp.det(r)
+        cmp_x_s = cmp.det(s)
+        r_x_s = r.det(s)
+        s_x_r = s.det(r)
+
+        if cmp_x_r == 0:
+            # Segments are collinear and so intersect if they have any overlap
+            resp = other.lower.x < self.lower.x != other.lower.x < self.higher.x
+            resp |= other.lower.y < self.lower.y != other.lower.y < self.higher.y
+        elif r_x_s == 0:
+            # Lines are parallel.
+            resp = False
+        else:
+            r_x_sr = 1.0 / r_x_s
+            t = cmp_x_s * r_x_sr
+            u = cmp_x_r * r_x_sr
 
             resp = (0.0 < t < 1.0 and 0.0 < u < 1.0)
+
+        return resp

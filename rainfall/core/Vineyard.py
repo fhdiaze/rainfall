@@ -25,15 +25,18 @@ class Vineyard(object):
 
     def punctures(self, x, y):
         p = 0
-        if x < self.min_x or self.max_x < x:
-            p = math.inf
-        elif y < self.min_y:
+
+        if y < self.min_y:
             if self.start <= x <= self.end:
                 p = 0
             else:
                 p = math.inf
-        elif y > self.max_y and (x < self.start or self.end < x):
+        elif y >= self.max_y and (x < self.start or self.end < x):
             p = math.inf
+        elif x < min(self.min_x, self.start) or max(self.max_x, self.end) < x:  # revisar
+            p = math.inf
+        elif self.start <= x <= self.min_x <= self.end or self.max_x <= self.start <= x <= self.end:  # revisar
+            p = 0
         else:
             tarp = self.cross_tarp(Tarp(Point(x, y-1), Point(x, y)))
 
