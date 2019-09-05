@@ -14,3 +14,4 @@ vineyard = Vineyard(l, r, tarps)
 vineyard.plot()
 
 print(vineyard)
+print(vineyard.tarps_box())

@@ -22,3 +22,6 @@ class Point:
 
     def right(self, other):
         return self.x > other.x
+
+    def det(self, other):
+        return (self.x * other.y) - (self.y * other.x)
