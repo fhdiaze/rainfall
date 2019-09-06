@@ -16,5 +16,4 @@ for i in range(n):
     tarps.append(Tarp(Point(tx, ty), Point(hx, hy)))
 
 vineyard = Vineyard(l, r, tarps)
-vineyard.plot()
-print(vineyard.punctures_with_memo())
+print(vineyard.memo_punctures())
