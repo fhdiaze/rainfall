@@ -15,3 +15,7 @@ vineyard.plot()
 
 print(vineyard)
 print(vineyard.tarps_box())
+print(vineyard.min_punctures())
+print(vineyard.punctures(18, 40))
+print(vineyard.punctures(11, 30))
+print(vineyard.punctures(15, 30))
