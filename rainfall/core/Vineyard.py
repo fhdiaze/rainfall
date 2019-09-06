@@ -21,10 +21,84 @@ class Vineyard(object):
         tarps = ", ".join([str(t) for t in self.tarps])
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)
 
-    def min_punctures(self):
-        return min([self.punctures(x, self.max_y) for x in range(self.start, self.end+1)])
+    def punctures(self, f):
+        punctures = (f(x, self.max_y) for x in range(self.start, self.end + 1))
+        p = next(punctures)
 
-    def punctures(self, x, y):
+        while p > 0:
+            np = next(punctures)
+            p = np if np < p else p
+
+        return p
+
+    def recursive_punctures(self):
+        punctures = self.punctures(lambda x, y: self.min_punctures(x, y))
+
+        return punctures
+
+    def memo_punctures(self):
+        punctures = self.punctures(lambda x, y: self.min_punctures_with_memo(dict(), x, y))
+
+        return punctures
+
+    def iterative_punctures(self):
+        punctures = self.punctures(lambda x, y: self.min_iter_punctures(x, y))
+
+        return punctures
+
+    # def min_iter_punctures(self, x, y):
+    #     p = -1
+    #
+    #     for y in range(self.min_y+1, self.max_y+1):
+    #         for x in range(self.min_x, self.max_x):
+    #
+    #     if self.min_x < x < self.max_x and y > self.min_y:
+    #         # The point could be over tarps
+    #         tarp = self.cross_tarp(Tarp(Point(x, y - 1), Point(x, y)))
+    #
+    #         if tarp is not None:
+    #             slope = tarp.slope()
+    #             nx = x - 1 if slope > 0 else x + 1
+    #             make_puncture = 1 + self.min_punctures(x, y - 1)
+    #             no_puncture = self.min_punctures(nx, y)
+    #             p = min(make_puncture, no_puncture)
+    #         else:
+    #             p = self.min_punctures(x, y - 1)
+    #     elif self.start <= x <= self.end:
+    #         p = 0
+    #     else:
+    #         p = Vineyard.MAX_TARPS
+    #
+    #     return p
+
+    def min_punctures_with_memo(self, m, x, y):
+        p = -1
+
+        if self.min_x < x < self.max_x and y > self.min_y:
+            p = m.get((x, y), -1)
+
+            if p == -1:
+                # The point could be over tarps
+                tarp = self.cross_tarp(Tarp(Point(x, y - 1), Point(x, y)))
+
+                if tarp is not None:
+                    slope = tarp.slope()
+                    nx = x - 1 if slope > 0 else x + 1
+                    make_puncture = 1 + self.min_punctures_with_memo(m, x, y - 1)
+                    no_puncture = self.min_punctures_with_memo(m, nx, y)
+                    p = min(make_puncture, no_puncture)
+                else:
+                    p = self.min_punctures_with_memo(m, x, y - 1)
+
+                m[(x, y)] = p
+        elif self.start <= x <= self.end:
+            p = 0
+        else:
+            p = Vineyard.MAX_TARPS
+
+        return p
+
+    def min_punctures(self, x, y):
         p = -1
 
         if self.min_x < x < self.max_x and y > self.min_y:
@@ -34,9 +108,11 @@ class Vineyard(object):
             if tarp is not None:
                 slope = tarp.slope()
                 nx = x - 1 if slope > 0 else x + 1
-                p = min(1 + self.punctures(x, y - 1), self.punctures(nx, y))
+                make_puncture = 1 + self.min_punctures(x, y - 1)
+                no_puncture = self.min_punctures(nx, y)
+                p = min(make_puncture, no_puncture)
             else:
-                p = self.punctures(x, y - 1)
+                p = self.min_punctures(x, y - 1)
         elif self.start <= x <= self.end:
             p = 0
         else:

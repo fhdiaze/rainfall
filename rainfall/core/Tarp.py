@@ -23,6 +23,12 @@ class Tarp(object):
         return self.lower - self.higher
 
     def intersect(self, other):
+        """Checks whether two tarps intersect with each other. It does not include extreme points.
+        Note: Based in http://ideone.com/PnPJgb
+
+        :param other: the other tarp
+        :return: True if the self intersects with other, False otherwise
+        """
         resp = False
         cmp = other.lower - self.lower
         r = self.clockwise()
@@ -45,6 +51,6 @@ class Tarp(object):
             t = cmp_x_s * r_x_sr
             u = cmp_x_r * r_x_sr
 
-            resp = (0.0 < t < 1.0 and 0.0 < u < 1.0)
+            resp = (0.0 <= t <= 1.0 and 0.0 <= u <= 1.0) and (0.0 < t < 1.0 or 0.0 < u < 1.0)
 
         return resp

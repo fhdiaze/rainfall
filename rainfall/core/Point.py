@@ -12,7 +12,10 @@ class Point:
         return f"({self.x}, {self.y})"
 
     def __eq__(self, other):
-        return self.x == other.y and self.y == other.y
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return self.x != other.x or self.y == other.y
 
     def __sub__(self, other):
         nx = self.x - other.x

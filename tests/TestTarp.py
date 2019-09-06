@@ -38,7 +38,7 @@ class TestTarp(unittest.TestCase):
         # Assert
         self.assertFalse(intersect)
 
-    def test_intersecting_vertical_slanted(self):
+    def test_vertical_intersecting_slanted(self):
         # Assume
         t1 = Tarp(Point(3, 3), Point(3, 4))
         t2 = Tarp(Point(1, 2), Point(4, 4))
@@ -49,7 +49,40 @@ class TestTarp(unittest.TestCase):
         # Assert
         self.assertTrue(intersect)
 
-    def test_non_intersecting_vertical_slanted(self):
+    def test_vertical_intersecting_negative_slanted(self):
+        # Assume
+        t1 = Tarp(Point(3, 2), Point(3, 3))
+        t2 = Tarp(Point(5, 1), Point(2, 3))
+
+        # Action
+        intersect = t1.intersect(t2)
+
+        # Assert
+        self.assertTrue(intersect)
+
+    def test_vertical_intersecting_negative_slanted2(self):
+        # Assume
+        t1 = Tarp(Point(10, 11), Point(10, 12))
+        t2 = Tarp(Point(25, 5), Point(0, 15))
+
+        # Action
+        intersect = t1.intersect(t2)
+
+        # Assert
+        self.assertTrue(intersect)
+
+    def test_vertical_intersecting_negative_slanted3(self):
+        # Assume
+        t1 = Tarp(Point(10, 10), Point(10, 11))
+        t2 = Tarp(Point(25, 5), Point(0, 15))
+
+        # Action
+        intersect = t1.intersect(t2)
+
+        # Assert
+        self.assertTrue(intersect)
+
+    def test_vertical_non_intersecting_slanted(self):
         # Assume
         t1 = Tarp(Point(4, 4), Point(4, 5))
         t2 = Tarp(Point(1, 2), Point(4, 4))
@@ -60,7 +93,7 @@ class TestTarp(unittest.TestCase):
         # Assert
         self.assertFalse(intersect)
 
-    def test_non_intersecting_vertical_slanted2(self):
+    def test_vertical_non_intersecting_slanted2(self):
         # Assume
         t1 = Tarp(Point(4, 3), Point(4, 4))
         t2 = Tarp(Point(1, 2), Point(4, 4))
