@@ -128,6 +128,8 @@ class Vineyard(object):
 
                 current_row[(x, y)] = p
 
+            last_row, current_row = current_row, dict()
+
         return p
 
     def cross_tarp(self, vt):
