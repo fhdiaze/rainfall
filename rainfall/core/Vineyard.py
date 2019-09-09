@@ -44,9 +44,32 @@ class Vineyard(object):
         return punctures
 
     def iterative_punctures(self):
-        punctures = self.punctures(lambda x, y: self.min_iter_punctures(x, y))
+        p = -1
+        width = max(self.end, self.max_x) - min(self.start, self.min_x)
+        costs = [[-1] * width] * 2
 
-        return punctures
+        # Init base values
+        for x in range(min(self.start, self.min_x), max(self.end, self.max_x)):
+            p = Point(x, self.min_y)
+
+            if self.start <= x <= self.end:
+                cost = 0
+            else:
+                cost = Vineyard.MAX_TARPS
+
+            self.set_cost(costs, self.min_y + 1, p, cost)
+
+        for y in range(self.min_y + 1, self.max_y + 1):
+            for x in range(self.start, self.end + 1):
+                p = Point(x, y)
+                if self.get_cost(costs, y, p) == -1:
+                    self.cost(costs, y, Point(x, y))
+
+            # Flip costs
+            costs[1] = costs[0]
+            costs[0] = [-1] * width
+
+        return min(costs[0])
 
     def min_punctures(self, x, y):
         p = -1
@@ -97,40 +120,41 @@ class Vineyard(object):
 
         return p
 
-    def min_iter_punctures(self, x, y):
-        p = -1
+    def cost(self, costs: List[List[int]], row, p: Point):
+        # The point could be over tarps
+        vertical_delta = Point(0, 1)
+        horizontal_delta = Point(1, 0)
+        below_point = p-vertical_delta
+        intersected = self.cross_tarp(Tarp(below_point, p))
 
-        last_row = dict()
-        current_row = dict()
+        if intersected:
+            slope = intersected[0].slope()
+            next_point = p - horizontal_delta if slope > 0 else p + horizontal_delta
+            drill_cost = len(intersected) + self.get_cost(costs, row, below_point)
+            slide_cost = self.cost(costs, row, next_point)
 
-        # Init base values
-        for x in range(min(self.start, self.min_x), max(self.end, self.max_x)):
-            if self.start <= x <= self.end:
-                p = 0
-            else:
-                p = Vineyard.MAX_TARPS
+            # Choose the best option (drill the tarp or let the rain slide)
+            cost = min(drill_cost, slide_cost)
+        else:
+            cost = self.get_cost(costs, row, below_point)
 
-            last_row[(x, self.min_y)] = p
+        self.set_cost(costs, row, p, cost)
 
-        for y in range(self.min_y+1, self.max_y+1):
-            for x in range(self.start, self.end+1):
-                # The point could be over tarps
-                intersected = self.cross_tarp(Tarp(Point(x, y - 1), Point(x, y)))
+        return cost
 
-                if intersected:
-                    slope = intersected[0].slope()
-                    nx = x - 1 if slope > 0 else x + 1
-                    make_puncture = len(intersected) + last_row.get((x, y - 1))
-                    no_puncture = self.min_punctures_with_memo(nx, y)
-                    p = min(make_puncture, no_puncture)
-                else:
-                    p = last_row.get((x, y - 1))
+    def get_cost(self, costs: List[List[int]], row, p: Point):
+        horizontal_shift = min(self.min_x, self.start)
+        shift = Point(horizontal_shift, row-p.y)
+        shifted_point = abs(p - shift)
 
-                current_row[(x, y)] = p
+        return costs[shifted_point.y][shifted_point.x]
 
-            last_row, current_row = current_row, dict()
+    def set_cost(self, costs: List[List[int]], row, p: Point, cost: int):
+        horizontal_shift = min(self.min_x, self.start)
+        shift = Point(horizontal_shift, row-p.y)
+        shifted_point = abs(p - shift)
 
-        return p
+        costs[shifted_point.y][shifted_point.x] = cost
 
     def cross_tarp(self, vt):
         intersected = []

@@ -23,5 +23,8 @@ class Point:
 
         return Point(nx, ny)
 
+    def __abs__(self):
+        return Point(abs(self.x), abs(self.y))
+
     def det(self, other):
         return (self.x * other.y) - (self.y * other.x)
