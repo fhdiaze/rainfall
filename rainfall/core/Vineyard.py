@@ -22,13 +22,16 @@ class Vineyard(object):
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)
 
     def punctures(self, f):
-        punctures = (f(x, self.max_y) for x in range(self.start, self.end + 1))
-        p = next(punctures)
-        np = p
+        punctures = (f(x, self.max_y) for x in range(self.min_x, self.max_x + 1))
+        p = self.MAX_TARPS
+        np = next(punctures)
+        i = self.min_x
 
         while p > 0 and np is not None:
+            if self.start <= i <= self.end:
+                p = np if np is not None and np < p else p
             np = next(punctures, None)
-            p = np if np is not None and np < p else p
+            i += 1
 
         return p
 
@@ -69,7 +72,7 @@ class Vineyard(object):
             costs[1] = costs[0]
             costs[0] = [-1] * width
 
-        return min(costs[1])
+        return min(costs[1][self.start-self.min_x:self.end-self.min_x+1])
 
     def min_punctures(self, x, y):
         p = -1
