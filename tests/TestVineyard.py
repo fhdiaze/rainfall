@@ -11,7 +11,6 @@ class TestTarp(unittest.TestCase):
         t1 = Tarp(Point(6, 2), Point(2, 5))
         t2 = Tarp(Point(5, 2), Point(0, 4))
         v = Vineyard(3, 5, [t0, t1, t2])
-        v.plot()
 
         # Action
         minimum_punctures = v.iterative_punctures()
@@ -113,6 +112,33 @@ class TestTarp(unittest.TestCase):
 
         # Assert
         self.assertEqual(minimum_punctures, 2)
+
+    def test_recursive_punctures4(self):
+        # Assume
+        t0 = Tarp(Point(4, 2), Point(1, 3))
+        t1 = Tarp(Point(6, 2), Point(1, 6))
+        t2 = Tarp(Point(5, 2), Point(0, 4))
+        t3 = Tarp(Point(3, 1), Point(7, 2))
+        v = Vineyard(2, 3, [t0, t1, t2, t3])
+
+        # Action
+        minimum_punctures = v.recursive_punctures()
+
+        # Assert
+        self.assertEqual(minimum_punctures, 0)
+
+    def test_recursive_punctures5(self):
+        # Assume
+        t0 = Tarp(Point(4, 2), Point(1, 3))
+        t1 = Tarp(Point(6, 1), Point(1, 4))
+        v = Vineyard(3, 4, [t0, t1])
+        v.plot()
+
+        # Action
+        minimum_punctures = v.recursive_punctures()
+
+        # Assert
+        self.assertEqual(minimum_punctures, 1)
 
     def test_memo_punctures(self):
         # Assume
