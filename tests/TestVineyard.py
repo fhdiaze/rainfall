@@ -11,6 +11,7 @@ class TestTarp(unittest.TestCase):
         t1 = Tarp(Point(6, 2), Point(2, 5))
         t2 = Tarp(Point(5, 2), Point(0, 4))
         v = Vineyard(3, 5, [t0, t1, t2])
+        v.plot()
 
         # Action
         minimum_punctures = v.iterative_punctures()

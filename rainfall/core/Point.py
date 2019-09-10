@@ -29,6 +29,9 @@ class Point:
 
         return Point(nx, ny)
 
+    def __neg__(self):
+        return Point(-self.x, -self.y)
+
     def __abs__(self):
         return Point(abs(self.x), abs(self.y))
 

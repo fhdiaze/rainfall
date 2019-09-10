@@ -51,6 +51,7 @@ class Tarp(object):
             t = cmp_x_s * r_x_sr
             u = cmp_x_r * r_x_sr
 
+            # TODO check what happens when the algorithm is iterative (from ground to sky)
             resp = (0.0 <= t <= 1.0 and 0.0 <= u <= 1.0) and (0.0 < t < 1.0 or 0.0 < u < 1.0)
 
         return resp
