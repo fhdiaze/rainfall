@@ -45,14 +45,14 @@ class Vineyard(object):
 
     def iterative_punctures(self):
         p = -1
-        width = max(self.end, self.max_x) - min(self.start, self.min_x)
-        costs = [[-1] * width] * 2
+        width = self.max_x - self.min_x + 1
+        costs = [[-1 for _ in range(width)] for _ in range(2)]
 
         # Init base values
-        for x in range(min(self.start, self.min_x), max(self.end, self.max_x)):
+        for x in range(self.min_x, self.max_x+1):
             p = Point(x, self.min_y)
 
-            if self.start <= x <= self.end:
+            if self.start <= p.x <= self.end:
                 cost = 0
             else:
                 cost = Vineyard.MAX_TARPS
@@ -60,7 +60,7 @@ class Vineyard(object):
             self.set_cost(costs, self.min_y + 1, p, cost)
 
         for y in range(self.min_y + 1, self.max_y + 1):
-            for x in range(self.start, self.end + 1):
+            for x in range(self.min_x, self.max_x+1):
                 p = Point(x, y)
                 if self.get_cost(costs, y, p) == -1:
                     self.cost(costs, y, Point(x, y))
@@ -69,7 +69,7 @@ class Vineyard(object):
             costs[1] = costs[0]
             costs[0] = [-1] * width
 
-        return min(costs[0])
+        return min(costs[1])
 
     def min_punctures(self, x, y):
         p = -1
@@ -143,15 +143,13 @@ class Vineyard(object):
         return cost
 
     def get_cost(self, costs: List[List[int]], row, p: Point):
-        horizontal_shift = min(self.min_x, self.start)
-        shift = Point(horizontal_shift, row-p.y)
+        shift = Point(self.min_x, row)
         shifted_point = abs(p - shift)
 
         return costs[shifted_point.y][shifted_point.x]
 
     def set_cost(self, costs: List[List[int]], row, p: Point, cost: int):
-        horizontal_shift = min(self.min_x, self.start)
-        shift = Point(horizontal_shift, row-p.y)
+        shift = Point(self.min_x, row)
         shifted_point = abs(p - shift)
 
         costs[shifted_point.y][shifted_point.x] = cost
@@ -165,7 +163,7 @@ class Vineyard(object):
         return intersected
 
     def tarps_box(self):
-        min_x, min_y, max_x, max_y = Vineyard.MAX_X, Vineyard.MAX_Y, 0, 0,
+        min_x, min_y, max_x, max_y = self.start, Vineyard.MAX_Y, self.end, 0,
 
         for tarp in self.tarps:
             min_x = min(min_x, tarp.lower.x, tarp.higher.x)

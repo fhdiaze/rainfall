@@ -17,6 +17,12 @@ class Point:
     def __ne__(self, other):
         return self.x != other.x or self.y == other.y
 
+    def __add__(self, other):
+        nx = self.x + other.x
+        ny = self.y + other.y
+
+        return Point(nx, ny)
+
     def __sub__(self, other):
         nx = self.x - other.x
         ny = self.y - other.y
