@@ -1,7 +1,6 @@
 import unittest
 from rainfall.core.Point import Point
 from rainfall.core.Tarp import Tarp
-from rainfall.core.Vineyard import Vineyard
 
 
 class TestTarp(unittest.TestCase):
