@@ -1,6 +1,9 @@
 import math
 import matplotlib.pyplot as plt
 from typing import List
+
+from matplotlib.ticker import MultipleLocator
+
 from rainfall.core.Point import Point
 from rainfall.core.Tarp import Tarp
 
@@ -185,7 +188,7 @@ class Vineyard(object):
     def plot(self):
         plt.interactive(False)
         plt.show(block=True)
-        plt.axes()
+        ax = plt.axes()
 
         line = plt.Line2D([self.start, self.end], [0, 0], 4, color='green')
         plt.gca().add_line(line)
@@ -197,11 +200,9 @@ class Vineyard(object):
             plt.gca().add_line(line)
 
         # Show the grid lines as dark grey lines
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.yaxis.set_major_locator(MultipleLocator(1))
         plt.grid(b=True, which='major', color='#666666', linestyle='-')
 
-        # Show the minor grid lines with very faint and almost transparent grey lines
-        plt.minorticks_on()
-        plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
-
-        plt.axis('scaled')
+        plt.axis('equal')
         plt.show()
