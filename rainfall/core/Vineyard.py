@@ -1,9 +1,6 @@
-import math
 import matplotlib.pyplot as plt
 from typing import List
-
 from matplotlib.ticker import MultipleLocator
-
 from rainfall.core.Point import Point
 from rainfall.core.Tarp import Tarp
 
@@ -18,6 +15,7 @@ class Vineyard(object):
         self.start = start
         self.end = end
         self.tarps = tarps
+        self.tarps.sort(key=lambda t: t.lower.y)
         self.min_x, self.min_y, self.max_x, self.max_y = self.tarps_box()
 
     def __str__(self):
@@ -25,16 +23,13 @@ class Vineyard(object):
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)
 
     def punctures(self, f):
-        punctures = (f(x, self.max_y) for x in range(self.min_x, self.max_x + 1))
-        p = self.MAX_TARPS
-        np = next(punctures)
-        i = self.min_x
+        punctures = (f(x, self.max_y) for x in range(self.start, self.end + 1))
+        p = next(punctures)
+        np = p
 
         while p > 0 and np is not None:
-            if self.start <= i <= self.end:
-                p = np if np is not None and np < p else p
             np = next(punctures, None)
-            i += 1
+            p = np if np is not None and np < p else p
 
         return p
 
@@ -44,8 +39,6 @@ class Vineyard(object):
         return punctures
 
     def min_punctures(self, x, y):
-        p = -1
-
         if self.min_x < x < self.max_x and y > self.min_y:
             # TODO check this condition because we change the method tarps_box()
             # The point could be over tarps
@@ -73,8 +66,6 @@ class Vineyard(object):
         return punctures
 
     def min_punctures_with_memo(self, m, x, y):
-        p = -1
-
         if self.min_x < x < self.max_x and y > self.min_y:
             p = m.get((x, y), -1)
 
@@ -101,54 +92,49 @@ class Vineyard(object):
 
     def iterative_punctures(self):
         p = -1
-        width = self.end - self.start + 1
-        vertical_delta = Point(0, 1)
-        horizontal_delta = Point(1, 0)
+        width = self.max_x - self.min_x + 1
+        costs = [[-1 for _ in range(width)] for _ in range(2)]
 
         # Init base values
-        memo = [0] * width
-        memo_x_range = (self.start, self.end)
+        for x in range(self.min_x, self.max_x + 1):
+            p = Point(x, self.min_y)
+
+            if self.start <= p.x <= self.end:
+                cost = 0
+            else:
+                cost = Vineyard.MAX_TARPS
+
+            self.set_cost(costs, self.min_y + 1, p, cost)
 
         for y in range(self.min_y + 1, self.max_y + 1):
-            current = []
-            for x in range(memo_x_range[0], memo_x_range[1]+1):
-                # The point could be over tarps
+            for x in range(self.min_x, self.max_x + 1):
                 p = Point(x, y)
-                above_point = p + vertical_delta
-                intersected = self.cross_tarp(Tarp(p, above_point))
+                if self.get_cost(costs, y, p) == -1:
+                    self.cost(costs, y, Point(x, y))
 
-                if intersected:
-                    slope = intersected[0].slope()
-                    horizontal_move = horizontal_delta if slope > 0 else -horizontal_delta
-                    drill_cost = len(intersected)
-                    slide_cost = self.cost(costs, row, next_point)
+            # Flip costs
+            costs[1] = costs[0]
+            costs[0] = [-1] * width
 
-                    # Choose the best option (drill the tarp or let the rain slide)
-                    cost = min(drill_cost, slide_cost)
-                else:
-                    cost = [0]
-
-                self.set_cost(costs, row, p, cost)
-
-        return min(costs[1][self.start-self.min_x:self.end-self.min_x+1])
+        return min(costs[1][self.start - self.min_x:self.end - self.min_x + 1])
 
     def cost(self, costs: List[List[int]], row, p: Point):
         # The point could be over tarps
         vertical_delta = Point(0, 1)
         horizontal_delta = Point(1, 0)
-        above_point = p + vertical_delta
-        intersected = self.cross_tarp(Tarp(p, above_point))
+        below_point = p - vertical_delta
+        intersected = self.cross_tarp(Tarp(below_point, p))
 
         if intersected:
             slope = intersected[0].slope()
-            next_point = p + horizontal_delta + vertical_delta if slope > 0 else p - horizontal_delta
+            next_point = p - horizontal_delta if slope > 0 else p + horizontal_delta
             drill_cost = len(intersected) + self.get_cost(costs, row, below_point)
             slide_cost = self.cost(costs, row, next_point)
 
             # Choose the best option (drill the tarp or let the rain slide)
             cost = min(drill_cost, slide_cost)
         else:
-            cost = p
+            cost = self.get_cost(costs, row, below_point)
 
         self.set_cost(costs, row, p, cost)
 
@@ -168,6 +154,8 @@ class Vineyard(object):
 
     def cross_tarp(self, vt):
         intersected = []
+        down, top = 0, 0
+
         for t in self.tarps:
             if t.intersect(vt):
                 intersected.append(t)
@@ -175,7 +163,7 @@ class Vineyard(object):
         return intersected
 
     def tarps_box(self):
-        min_x, min_y, max_x, max_y = self.start, Vineyard.MAX_Y, self.end, 0,
+        min_x, min_y, max_x, max_y = Vineyard.MAX_X, Vineyard.MAX_Y, 0, 0,
 
         for tarp in self.tarps:
             min_x = min(min_x, tarp.lower.x, tarp.higher.x)

@@ -120,6 +120,7 @@ class TestTarp(unittest.TestCase):
         t2 = Tarp(Point(5, 2), Point(0, 4))
         t3 = Tarp(Point(3, 1), Point(7, 2))
         v = Vineyard(2, 3, [t0, t1, t2, t3])
+        v.plot()
 
         # Action
         minimum_punctures = v.recursive_punctures()
@@ -132,7 +133,6 @@ class TestTarp(unittest.TestCase):
         t0 = Tarp(Point(4, 2), Point(1, 3))
         t1 = Tarp(Point(6, 1), Point(1, 4))
         v = Vineyard(3, 4, [t0, t1])
-        v.plot()
 
         # Action
         minimum_punctures = v.recursive_punctures()
