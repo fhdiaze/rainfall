@@ -40,7 +40,6 @@ class Vineyard(object):
 
     def min_punctures(self, x, y):
         if self.min_x < x < self.max_x and y > self.min_y:
-            # TODO check this condition because we change the method tarps_box()
             # The point could be over tarps
             intersected = self.cross_tarp(Tarp(Point(x, y - 1), Point(x, y)))
 
@@ -91,32 +90,36 @@ class Vineyard(object):
         return p
 
     def iterative_punctures(self):
-        p = -1
-        width = self.max_x - self.min_x + 1
-        costs = [[-1 for _ in range(width)] for _ in range(2)]
+        p = 0
 
-        # Init base values
-        for x in range(self.min_x, self.max_x + 1):
-            p = Point(x, self.min_y)
+        if self.min_x < self.start < self.end < self.max_x:
+            width = self.max_x - self.min_x + 1
+            costs = [[-1 for _ in range(width)] for _ in range(2)]
 
-            if self.start <= p.x <= self.end:
-                cost = 0
-            else:
-                cost = Vineyard.MAX_TARPS
-
-            self.set_cost(costs, self.min_y + 1, p, cost)
-
-        for y in range(self.min_y + 1, self.max_y + 1):
+            # Init base values
             for x in range(self.min_x, self.max_x + 1):
-                p = Point(x, y)
-                if self.get_cost(costs, y, p) == -1:
-                    self.cost(costs, y, Point(x, y))
+                p = Point(x, self.min_y)
 
-            # Flip costs
-            costs[1] = costs[0]
-            costs[0] = [-1] * width
+                if self.start <= p.x <= self.end:
+                    cost = 0
+                else:
+                    cost = Vineyard.MAX_TARPS
 
-        return min(costs[1][self.start - self.min_x:self.end - self.min_x + 1])
+                self.set_cost(costs, self.min_y + 1, p, cost)
+
+            for y in range(self.min_y + 1, self.max_y + 1):
+                for x in range(self.min_x, self.max_x + 1):
+                    p = Point(x, y)
+                    if self.get_cost(costs, y, p) == -1:
+                        self.cost(costs, y, p)
+
+                # Flip costs
+                costs[1] = costs[0]
+                costs[0] = [-1] * width
+
+            p = min(costs[1][self.start - self.min_x:self.end - self.min_x + 1])
+
+        return p
 
     def cost(self, costs: List[List[int]], row, p: Point):
         # The point could be over tarps
@@ -154,6 +157,7 @@ class Vineyard(object):
 
     def cross_tarp(self, vt):
         intersected = []
+        # TODO Add range to the search
         down, top = 0, 0
 
         for t in self.tarps:

@@ -29,7 +29,6 @@ class Tarp(object):
         :param other: the other tarp
         :return: True if the self intersects with other, False otherwise
         """
-        resp = False
         cmp = other.lower - self.lower
         r = self.clockwise()
         s = other.clockwise()
@@ -37,13 +36,8 @@ class Tarp(object):
         cmp_x_r = cmp.det(r)
         cmp_x_s = cmp.det(s)
         r_x_s = r.det(s)
-        s_x_r = s.det(r)
 
-        if cmp_x_r == 0:
-            # Segments are collinear and so intersect if they have any overlap
-            resp = other.lower.x < self.lower.x != other.lower.x < self.higher.x
-            resp |= other.lower.y < self.lower.y != other.lower.y < self.higher.y
-        elif r_x_s == 0:
+        if r_x_s == 0:
             # Lines are parallel.
             resp = False
         else:
@@ -51,7 +45,6 @@ class Tarp(object):
             t = cmp_x_s * r_x_sr
             u = cmp_x_r * r_x_sr
 
-            # TODO check what happens when the algorithm is iterative (from ground to sky)
-            resp = (0.0 <= t <= 1.0 and 0.0 <= u <= 1.0) and (0.0 < t < 1.0 or 0.0 < u < 1.0)
+            resp = (0.0 < t < 1.0 and 0.0 < u <= 1.0)
 
         return resp
