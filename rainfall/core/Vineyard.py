@@ -162,19 +162,19 @@ class Vineyard(object):
         intersected = []
         i = self.low_tarp
 
-        while i <= self.high_tarp:
+        while i <= self.high_tarp < len(self.tarps):
             t = self.tarps[i]
 
             if t.intersect(vt):
                 intersected.append(t)
 
-            if t.higher.y <= vt.lower.y:
+            if i == self.low_tarp and t.higher.y <= vt.lower.y:
                 self.low_tarp += 1
                 self.high_tarp += 1 if self.low_tarp > self.high_tarp else 0
 
             i += 1
 
-            if i < len(self.tarps):
+            if self.high_tarp < i < len(self.tarps):
                 nt = self.tarps[i]
                 if nt.lower.y < vt.higher.y:
                     self.high_tarp += 1

@@ -4,7 +4,7 @@ from rainfall.core.Tarp import Tarp
 from rainfall.core.Vineyard import Vineyard
 
 # Uncomment the next two lines if you want to use a file as standard input
-in_path = "C:/Users/kuby/Downloads/icpc2019data/F-directingrainfall/secret-10-matthias.in"
+in_path = "C:/Users/fredy.diaz/Downloads/icpc2019data/F-directingrainfall/secret-10-matthias.in"
 sys.stdin = open(in_path, "r")
 
 l, r, n = tuple([int(n) for n in input().split(" ")])
