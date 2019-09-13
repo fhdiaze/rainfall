@@ -18,9 +18,3 @@ for i in range(n):
 vineyard = Vineyard(l, r, tarps)
 # vineyard.plot()
 print(vineyard.iterative_punctures())
-
-
-# 3 5 3
-# 4 2 1 3
-# 6 2 2 5
-# 5 2 0 4
