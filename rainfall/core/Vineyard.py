@@ -9,7 +9,7 @@ class Vineyard(object):
     MAX_X = 10**9
     MAX_Y = 10**9
     MAX_TARPS = 5 * 10**5
-    __slots__ = ["start", "end", "tarps", "min_x", "min_y", "max_x", "max_y"]
+    __slots__ = ["start", "end", "tarps", "min_x", "min_y", "max_x", "max_y", "low_tarp", "high_tarp"]
 
     def __init__(self, start: int, end: int, tarps: List[Tarp]):
         self.start = start
@@ -17,6 +17,8 @@ class Vineyard(object):
         self.tarps = tarps
         self.tarps.sort(key=lambda t: t.lower.y)
         self.min_x, self.min_y, self.max_x, self.max_y = self.tarps_box()
+        self.low_tarp = 0
+        self.high_tarp = 0
 
     def __str__(self):
         tarps = ", ".join([str(t) for t in self.tarps])
@@ -156,13 +158,26 @@ class Vineyard(object):
         costs[shifted_point.y][shifted_point.x] = cost
 
     def cross_tarp(self, vt):
-        intersected = []
         # TODO Add range to the search
-        down, top = 0, 0
+        intersected = []
+        i = self.low_tarp
 
-        for t in self.tarps:
+        while i <= self.high_tarp:
+            t = self.tarps[i]
+
             if t.intersect(vt):
                 intersected.append(t)
+
+            if t.higher.y <= vt.lower.y:
+                self.low_tarp += 1
+                self.high_tarp += 1 if self.low_tarp > self.high_tarp else 0
+
+            i += 1
+
+            if i < len(self.tarps):
+                nt = self.tarps[i]
+                if nt.lower.y < vt.higher.y:
+                    self.high_tarp += 1
 
         return intersected
 
