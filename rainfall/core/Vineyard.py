@@ -14,8 +14,7 @@ class Vineyard(object):
     def __init__(self, start: int, end: int, tarps: List[Tarp]):
         self.start = start
         self.end = end
-        self.tarps = tarps
-        self.tarps.sort(key=lambda t: t.lower.y)
+        self.tarps = sorted(tarps)
         self.min_x, self.min_y, self.max_x, self.max_y = self.tarps_box()
         self.low_tarp = 0
         self.high_tarp = 0
@@ -23,6 +22,38 @@ class Vineyard(object):
     def __str__(self):
         tarps = ", ".join([str(t) for t in self.tarps])
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)
+
+    def p(self):
+        ranges = [(self.start, self.end, 0)]
+
+        for t in self.tarps:
+            nr = []
+            for r in ranges:
+                start_range, end_range, cost_range = r
+                start_tarp, end_tarp = sorted((t.lower.x, t.higher.x))
+
+                if start_range <= start_tarp <= end_tarp <= end_range\
+                        or end_tarp <= start_range or start_tarp >= end_range:
+                    nr.append(r)
+                elif start_range <= t.lower.x <= end_range:
+                    if t.slope() > 0:
+                        nr.append((start_range, end_tarp, cost_range))
+                    else:
+                        nr.append((start_tarp, end_range, cost_range))
+                elif start_tarp < start_range < end_range < end_tarp:
+                    if t.slope() > 0:
+                        nr.append((start_range, end_tarp, cost_range + 1))
+                    else:
+                        nr.append((start_tarp, end_range, cost_range + 1))
+                else:
+                    if t.slope() > 0:
+                        nr.append((start_range, end_tarp, cost_range + 1))
+                        nr.append((end_tarp, end_range, cost_range))
+                    else:
+                        nr.append((start_range, start_tarp, cost_range))
+                        nr.append((start_tarp, end_range, cost_range + 1))
+            ranges = nr
+        return min([c if sr <= self.start <= er or sr <= self.end <= er else self.MAX_TARPS for (sr, er, c) in ranges])
 
     def punctures(self, f):
         punctures = (f(x, self.max_y) for x in range(self.start, self.end + 1))
@@ -207,8 +238,6 @@ class Vineyard(object):
             plt.gca().add_line(line)
 
         # Show the grid lines as dark grey lines
-        ax.xaxis.set_major_locator(MultipleLocator(1))
-        ax.yaxis.set_major_locator(MultipleLocator(1))
         plt.grid(b=True, which='major', color='#666666', linestyle='-')
 
         plt.axis('equal')
