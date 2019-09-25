@@ -27,14 +27,14 @@ class Tarp(object):
 
         if slx < olx < srx or slx < orx < srx:
             start_overlap = max(slx, olx)
-            om, ob = other.line_equation()
-            sm, sb = self.line_equation()
+            other_m, other_b = other.line_equation()
+            self_m, self_b = self.line_equation()
 
-            if om == sm:
-                resp = sb < ob
+            if other_m == self_m:
+                resp = self_b < other_b
             else:
-                intersection_x = (ob - sb) / (sm - om)
-                if sm > om:
+                intersection_x = (other_b - self_b) / (self_m - other_m)
+                if self_m > other_m:
                     resp = (start_overlap < intersection_x)
                 else:
                     resp = (start_overlap > intersection_x)
