@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 from typing import List
-from matplotlib.ticker import MultipleLocator
-from rainfall.core.Point import Point
 from rainfall.core.Tarp import Tarp
 
 
