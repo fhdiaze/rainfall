@@ -34,32 +34,32 @@ class Vineyard(object):
         ranges = [(self.start, self.end, 0)]
 
         for t in self.tarps:
-            nr = []
+            new_ranges = []
             for r in ranges:
                 start_range, end_range, cost_range = r
                 start_tarp, end_tarp = sorted((t.lower.x, t.higher.x))
 
                 if start_range <= start_tarp <= end_tarp <= end_range \
                         or end_tarp < start_range or start_tarp > end_range:
-                    nr.append(r)
+                    new_ranges.append(r)
                 elif start_range <= t.lower.x <= end_range:
                     if t.slope() > 0:
-                        nr.append((start_range, end_tarp, cost_range))
+                        new_ranges.append((start_range, end_tarp, cost_range))
                     else:
-                        nr.append((start_tarp, end_range, cost_range))
+                        new_ranges.append((start_tarp, end_range, cost_range))
                 elif start_tarp < start_range < end_range < end_tarp:
                     if t.slope() > 0:
-                        nr.append((start_range, end_range, cost_range + 1))
+                        new_ranges.append((start_range, end_range, cost_range + 1))
                     else:
-                        nr.append((start_tarp, end_range, cost_range + 1))
+                        new_ranges.append((start_tarp, end_range, cost_range + 1))
                 else:
                     if t.slope() > 0:
-                        nr.append((start_range, end_tarp, cost_range + 1))
-                        nr.append((end_tarp, end_range, cost_range))
+                        new_ranges.append((start_range, end_tarp, cost_range + 1))
+                        new_ranges.append((end_tarp, end_range, cost_range))
                     else:
-                        nr.append((start_range, start_tarp, cost_range))
-                        nr.append((start_tarp, end_range, cost_range + 1))
-            ranges = nr
+                        new_ranges.append((start_range, start_tarp, cost_range))
+                        new_ranges.append((start_tarp, end_range, cost_range + 1))
+            ranges = new_ranges
 
         punctures = [c if sr <= self.end and self.start <= er else self.MAX_TARPS for (sr, er, c) in ranges]
 
