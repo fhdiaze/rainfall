@@ -13,7 +13,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(3, 5, [t0, t1, t2])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(1, minimum_punctures)
@@ -26,7 +26,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(4, 6, [t0, t1, t2])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(0, minimum_punctures)
@@ -39,7 +39,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(2, 3, [t0, t1, t2])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(3, minimum_punctures)
@@ -52,10 +52,9 @@ class TestVineyard(unittest.TestCase):
         t3 = Tarp(Point(15, 30), Point(28, 40))
         t4 = Tarp(Point(5, 20), Point(14, 25))
         v = Vineyard(10, 20, [t0, t1, t2, t3, t4])
-        v.plot()
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(2, minimum_punctures)
@@ -68,7 +67,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(5, 7, [t0, t1, t2])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(0, minimum_punctures)
@@ -81,7 +80,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(2, 3, [t0, t1, t2])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(0, minimum_punctures)
@@ -95,7 +94,7 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(2, 3, [t0, t1, t2, t3])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(0, minimum_punctures)
@@ -107,7 +106,17 @@ class TestVineyard(unittest.TestCase):
         v = Vineyard(3, 4, [t0, t1])
 
         # Action
-        minimum_punctures = v.p()
+        minimum_punctures = v.punctures()
 
         # Assert
         self.assertEqual(1, minimum_punctures)
+
+    def test_punctures8(self):
+        # Assume
+        v = Vineyard(3, 5, [])
+
+        # Action
+        minimum_punctures = v.punctures()
+
+        # Assert
+        self.assertEqual(0, minimum_punctures)
