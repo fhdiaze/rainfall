@@ -21,9 +21,9 @@ class Vineyard(object):
         self.tarps = sorted(tarps)
 
     def __str__(self):
-        """Convert self tarp to its string representation
+        """Converts self vineyard to its string representation
 
-        :return: Tarp as string
+        :return: Vineyard as string
         """
         tarps = ", ".join([str(t) for t in self.tarps])
         return str.format("<{}, {}> : [{}]", self.start, self.end, tarps)

@@ -9,6 +9,10 @@ class Tarp(object):
         self.higher = higher
 
     def __str__(self):
+        """Converts self tarp to its string representation
+
+        :return: Tarp as string
+        """
         return str.format("<{}, {}>", self.lower, self.higher)
 
     def __lt__(self, other):
