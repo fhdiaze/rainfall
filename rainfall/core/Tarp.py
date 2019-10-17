@@ -5,6 +5,11 @@ class Tarp(object):
     __slots__ = ["lower", "higher"]
 
     def __init__(self, lower: Point, higher: Point):
+        """Creates a tarp
+
+        :param lower: The tarp's lower point
+        :param higher: The tarp's higher point
+        """
         self.lower = lower
         self.higher = higher
 
