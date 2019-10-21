@@ -32,7 +32,6 @@ class Vineyard(object):
         :return: The minimum punctures
         """
         ranges = [(self.start, self.end, 0)]
-        ttt = 0
 
         for t in self.tarps:
             new_ranges = []
@@ -61,8 +60,6 @@ class Vineyard(object):
                         new_ranges.append((start_range, start_tarp, cost_range))
                         new_ranges.append((start_tarp, end_range, cost_range + 1))
             ranges = new_ranges
-            print(ttt)
-            ttt += 1
 
         punctures = [c if sr <= self.end and self.start <= er else self.MAX_TARPS for (sr, er, c) in ranges]
 
