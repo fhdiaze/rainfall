@@ -6,9 +6,9 @@ class Store:
     MAX_X = 10 ** 9
     __slots__ = ["punctures"]
 
-    def __init__(self, l: int, r: int):
-        self.punctures = [Store.MAX_TARPS] * Store.MAX_X
-        self.punctures[l:r + 1] = 0
+    def __init__(self, l: int, r: int, max_x: int):
+        self.punctures = [Store.MAX_TARPS] * (max_x+1)
+        self.punctures[l:r + 1] = [0]*(r-l+1)
 
     def update(self, t: Tarp):
         xl, xr = t.sorted_xs()
@@ -21,7 +21,8 @@ class Store:
             delta = -1
 
         for x in range(xr - xl):
-            self.punctures[i] = min(self.punctures[i] + 1, self.punctures[i + delta])
+            self.punctures[i] = min(self.punctures[i] + 1, self.punctures[i - delta])
+            i = i + delta
 
     def min_punctures(self, xi: int, xf: int):
-        return min(self.punctures[xi, xf + 1])
+        return min(self.punctures[xi: xf + 1])
