@@ -27,8 +27,8 @@ class Tarp(object):
         :return: True if self is lower than other, False otherwise
         """
         resp = False
-        slx, srx = sorted((self.lower.x, self.higher.x))
-        olx, orx = sorted((other.lower.x, other.higher.x))
+        slx, srx = self.sorted_xs()
+        olx, orx = other.sorted_xs()
 
         if slx < olx < srx or slx < orx < srx:
             start_overlap = max(slx, olx)
@@ -73,3 +73,8 @@ class Tarp(object):
         b = self.lower.y - m * self.lower.x
 
         return m, b
+
+    def sorted_xs(self):
+        xi, xf = sorted((self.lower.x, self.higher.x))
+
+        return xi, xf

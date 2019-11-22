@@ -92,6 +92,7 @@ class TestVineyard(unittest.TestCase):
         t2 = Tarp(Point(5, 2), Point(0, 4))
         t3 = Tarp(Point(3, 1), Point(7, 2))
         v = Vineyard(2, 3, [t0, t1, t2, t3])
+        v.plot()
 
         # Action
         minimum_punctures = v.punctures()
